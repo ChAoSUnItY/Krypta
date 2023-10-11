@@ -1,4 +1,4 @@
-module Krypta.Internal where
+module Krypta.Internal(mod26, toAlphaEnum, fromAlphaEnum) where
 
 mod26 :: Int -> Int
 mod26 i = mod (i + 26) 26
