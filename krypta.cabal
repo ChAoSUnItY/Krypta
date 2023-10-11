@@ -26,6 +26,7 @@ source-repository head
 library
   exposed-modules:
       Krypta.Affine
+      Krypta.AutoKey
       Krypta.Internal
       Krypta.Vignere
   other-modules:
