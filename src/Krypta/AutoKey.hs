@@ -1,4 +1,4 @@
-module Krypta.AutoKey (autoKeyEncrypt, autoKeyDecrypt, autoKey) where
+module Krypta.AutoKey (autoKeyEncrypt, autoKeyDecrypt, decryptFullKey) where
 
 import Data.Bifunctor (Bifunctor (bimap))
 import Data.Char (toLower)
@@ -19,19 +19,19 @@ autoKeyEncrypt msg key =
     loweredKey = map toLower key
     fullKey = take msgLen (loweredKey ++ cycle loweredMsg)
 
-constructFullKey :: String -> String -> String
-constructFullKey msg key
-  | msgLen > keyLen = key ++ constructFullKey (drop keyLen msg) partialKey
+decryptFullKey :: String -> String -> String
+decryptFullKey msg key = decryptFullKey' (length msg) (length key) msg key
+
+decryptFullKey' :: Int -> Int -> String -> String -> String
+decryptFullKey' target keyLen msg key
+  | target > keyLen = key ++ decryptFullKey' (target - keyLen) keyLen (drop keyLen msg) streamingKey
   | otherwise = key
   where
-    msgLen = length msg
-    keyLen = length key
-    streamKey = zip msg key
-    partialKey = map (fromAlphaEnum . mod26 . uncurry (-) . bimap toAlphaEnum toAlphaEnum) streamKey
+    streamingKey = autoKey (-) msg key
 
 autoKeyDecrypt :: String -> String -> String
 autoKeyDecrypt msg key = autoKey (-) loweredMsg fullKey
   where
     loweredMsg = map toLower msg
     loweredKey = map toLower key
-    fullKey = constructFullKey msg loweredKey
+    fullKey = decryptFullKey loweredMsg loweredKey
