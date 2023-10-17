@@ -1,17 +1,17 @@
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE TypeOperators #-}
+
 module Krypta.Affine (affineEncrypt, affineDecrypt) where
 
-import Data.Char (toLower)
-import Krypta.Internal (fromAlphaEnum, mod26, toAlphaEnum)
+import Data.Modular ( unMod, type (/), ℤ )
+import Krypta.Internal (fromStreamMsg, toStreamMsg)
 
-affineEncrypt :: String -> Int -> Int -> String
+affineEncrypt :: String -> ℤ / 26 -> ℤ / 26 -> String
 affineEncrypt msg a b =
-  map (fromAlphaEnum . mod26 . (+ b) . (* a) . toAlphaEnum) streamMsg
-  where
-    streamMsg = map toLower msg
+  fromStreamMsg $ map ((+ b) . (* a)) $ toStreamMsg msg
 
-affineDecrypt :: String -> Int -> Int -> String
+affineDecrypt :: String -> ℤ / 26 -> ℤ / 26 -> String
 affineDecrypt msg a b =
-  map (fromAlphaEnum . mod26 . (* inv) . subtract b . toAlphaEnum) streamMsg
+  fromStreamMsg $ map ((* inverse) . subtract b) $ toStreamMsg msg
   where
-    inv = head $ filter ((== 1) . mod26 . (* a)) [1 .. 26]
-    streamMsg = map toLower msg
+    inverse = head $ filter ((== 1) . unMod . (* a)) [1 .. 25]

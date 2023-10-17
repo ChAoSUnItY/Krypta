@@ -3,7 +3,14 @@
 # For more information, please see the documentation at:
 #   https://docs.haskellstack.org/en/stable/lock_files
 
-packages: []
+packages:
+- completed:
+    hackage: modular-arithmetic-2.0.0.3@sha256:2fa424db61ef94cb9f0ae28665c6dbd76b0c910cc34d8bb0d6971bfbca80b956,1659
+    pantry-tree:
+      sha256: b44a61dc5cbed6ca6fdadfbb95546d01af3cb55a08bfbe43c21b13d0e1be18f4
+      size: 383
+  original:
+    hackage: modular-arithmetic-2.0.0.3
 snapshots:
 - completed:
     sha256: 60e54c1ba3c1e7163acf6dafa9d56b2d3b23f88a31ad53a1c9d888f32561f8da

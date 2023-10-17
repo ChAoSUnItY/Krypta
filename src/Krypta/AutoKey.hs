@@ -1,23 +1,24 @@
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE TypeOperators #-}
+
 module Krypta.AutoKey (autoKeyEncrypt, autoKeyDecrypt, decryptFullKey) where
 
-import Data.Bifunctor (Bifunctor (bimap))
-import Data.Char (toLower)
-import Krypta.Internal (fromAlphaEnum, mod26, toAlphaEnum)
+import Data.Char (isSpace, toLower)
+import Data.Modular ( type (/), ℤ )
+import Krypta.Internal (fromStreamMsg, toStreamMsg)
 
-autoKey :: (Int -> Int -> Int) -> String -> String -> String
+autoKey :: (ℤ / 26 -> ℤ / 26 -> ℤ / 26) -> String -> String -> String
 autoKey op msg key =
-  map (fromAlphaEnum . mod26 . uncurry op . bimap toAlphaEnum toAlphaEnum) streamMsg
+  fromStreamMsg $ map (uncurry op) streamMsg
   where
-    streamMsg = zip msg key
+    streamMsg = zip (toStreamMsg msg) (toStreamMsg key)
 
 autoKeyEncrypt :: String -> String -> String
 autoKeyEncrypt msg key =
   autoKey (+) msg fullKey
   where
-    msgLen = length msg
-    loweredMsg = map toLower msg
-    loweredKey = map toLower key
-    fullKey = take msgLen (loweredKey ++ cycle loweredMsg)
+    msgLen = length $ filter (not . isSpace) msg
+    fullKey = take msgLen (key ++ cycle msg)
 
 decryptFullKey :: String -> String -> String
 decryptFullKey msg key = decryptFullKey' (length msg) (length key) msg key

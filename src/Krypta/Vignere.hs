@@ -1,17 +1,17 @@
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE TypeOperators #-}
+
 module Krypta.Vignere (vigenereEncrypt, vigenereDecrpyt) where
 
-import Data.Bifunctor (Bifunctor (bimap))
-import Data.Char (toLower)
-import Krypta.Internal (fromAlphaEnum, mod26, toAlphaEnum)
+import Data.Modular ( type (/), ℤ )
+import Krypta.Internal (fromStreamMsg, toStreamMsg)
 
-vigenere :: (Int -> Int -> Int) -> String -> String -> String
+vigenere :: (ℤ / 26 -> ℤ / 26 -> ℤ / 26) -> String -> String -> String
 vigenere op msg key =
-  map (fromAlphaEnum . mod26 . uncurry op . bimap toAlphaEnum toAlphaEnum) streamMsg
+  fromStreamMsg $ map (uncurry op) streamMsg
   where
     msgLen = length msg
-    loweredMsg = map toLower msg
-    loweredKey = map toLower key
-    streamMsg = zip loweredMsg (take msgLen (cycle loweredKey))
+    streamMsg = zip (toStreamMsg msg) (toStreamMsg $ take msgLen (cycle key))
 
 vigenereEncrypt :: String -> String -> String
 vigenereEncrypt = vigenere (+)
