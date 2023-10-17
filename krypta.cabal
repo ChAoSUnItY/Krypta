@@ -27,6 +27,7 @@ library
   exposed-modules:
       Krypta.Affine
       Krypta.AutoKey
+      Krypta.Caesar
       Krypta.Internal
       Krypta.Vignere
   other-modules:

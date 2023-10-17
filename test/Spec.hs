@@ -6,6 +6,7 @@
 import Data.Modular (toMod, ℤ, type (/))
 import Krypta.Affine (affineDecrypt, affineEncrypt)
 import Krypta.AutoKey (autoKeyDecrypt, autoKeyEncrypt)
+import Krypta.Caesar (caesarDecrypt, caesarEncrypt)
 import Krypta.Vignere (vigenereDecrpyt, vigenereEncrypt)
 import Test.QuickCheck
 
@@ -35,6 +36,7 @@ main = do
   quickCheck vigenereTest
   quickCheck affineTest
   quickCheck autoKeyTest
+  quickCheck caesarTest
 
 vigenereTest :: NonEmptyLowercase -> NonEmptyLowercase -> Bool
 vigenereTest (NEL msg) (NEL key) = vigenereDecrpyt (vigenereEncrypt msg key) key == msg
@@ -44,3 +46,6 @@ affineTest (NEL msg) (Coprime a) (Mod26 b) = affineDecrypt (affineEncrypt msg a 
 
 autoKeyTest :: NonEmptyLowercase -> NonEmptyLowercase -> Bool
 autoKeyTest (NEL msg) (NEL key) = autoKeyDecrypt (autoKeyEncrypt msg key) key == msg
+
+caesarTest :: NonEmptyLowercase -> Mod26 -> Bool
+caesarTest (NEL msg) (Mod26 offset) = caesarDecrypt (caesarEncrypt msg offset) offset == msg
