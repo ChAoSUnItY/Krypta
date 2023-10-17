@@ -1,4 +1,5 @@
 {-# LANGUAGE DataKinds #-}
+{-# LANGUAGE InstanceSigs #-}
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE TypeOperators #-}
 
@@ -12,18 +13,21 @@ newtype Coprime = Coprime (ℤ / 26)
   deriving (Show)
 
 instance Arbitrary Coprime where
+  arbitrary :: Gen Coprime
   arbitrary = Coprime <$> elements [1, 3, 5, 7, 9, 11, 15, 17, 19, 21, 23, 25]
 
 newtype Mod26 = Mod26 (ℤ / 26)
   deriving (Show)
 
 instance Arbitrary Mod26 where
+  arbitrary :: Gen Mod26
   arbitrary = Mod26 . (toMod @26) <$> arbitrary
 
 newtype NonEmptyLowercase = NEL String
   deriving (Show)
 
 instance Arbitrary NonEmptyLowercase where
+  arbitrary :: Gen NonEmptyLowercase
   arbitrary = NEL <$> listOf1 (choose ('a', 'z'))
 
 main :: IO ()
